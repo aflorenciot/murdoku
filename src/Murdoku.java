@@ -105,4 +105,69 @@ public class Murdoku {
 
     }
 
+    // Muestra el tablero. Las X se calculan al mostrarlo y no se guardan.
+public static void mostrarTablero() {
+
+    System.out.println("\nTABLERO");
+    System.out.print("    ");
+
+    for (int columna = 0; columna < TAM; columna++) {
+        System.out.print((columna + 1) + "   ");
+    }
+
+    System.out.println();
+
+    for (int fila = 0; fila < TAM; fila++) {
+        System.out.print((fila + 1) + " | ");
+
+        for (int columna = 0; columna < TAM; columna++) {
+            System.out.print(simboloCasilla(fila, columna) + "   ");
+        }
+
+        System.out.println();
+    }
+
+    System.out.println("\nLeyenda: S = silla | = = alfombra | T = arbol | * = flores");
+    System.out.println("         P = piedra | M = mesa | . = libre | X = descartada");
+}
+
+// Decide que simbolo debe verse en una casilla
+public static char simboloCasilla(int fila, int columna) {
+
+    // Si hay un personaje, se muestra antes que el elemento
+    if (tablero[fila][columna] != '.') {
+        return tablero[fila][columna];
+    }
+
+    // Los elementos fijos siempre se muestran
+    if (elementos[fila][columna] != VACIO) {
+        return simboloElemento(elementos[fila][columna]);
+    }
+
+    // Las X solo se calculan para casillas vacias sin elemento
+    if (filaOcupada(fila) || columnaOcupada(columna)) {
+        return 'X';
+    }
+
+    return '.';
+}
+
+// Muestra los personajes que todavia no se han colocado
+public static void mostrarPersonajesDisponibles() {
+
+    System.out.println("\nPersonajes pendientes:");
+    boolean quedanPersonajes = false;
+
+    for (int i = 0; i < nombres.length; i++) {
+        if (!colocados[i]) {
+            System.out.println(letras[i] + " - " + nombres[i]);
+            quedanPersonajes = true;
+        }
+    }
+
+    if (!quedanPersonajes) {
+        System.out.println("Todos los personajes estan colocados.");
+    }
+}
+
 }
