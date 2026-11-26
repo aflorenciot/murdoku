@@ -60,50 +60,48 @@ public class MurdokuAdrian {
     static boolean[] colocados = new boolean[7];
 
     // =========================================================
-    // PERSONA 2: MENU PRINCIPAL Y CONTROL DE LA PARTIDA
+    //  MENU PRINCIPAL Y CONTROL DE LA PARTIDA
     // =========================================================
 
     // Muestra el menu, llama a las acciones y controla cuando termina el juego.
-    /*public static void main(String[] args) {
+    public static void main(String[] args) {
 
-        inicializarTablero();
+        //inicializarTablero();
 
-        int opcion;
+        int option;
         boolean casoResuelto = false;
 
         do {
-            System.out.println("\n========== MURDOKU: EL CASO DEL PICNIC ==========");
-            mostrarTablero();
-            mostrarPersonajesDisponibles();
+            System.out.println("\n=== MURDOKU: EL CASO DEL PICNIC ===");
+            //mostrarTablero();
+            //mostrarPersonajesDisponibles();
 
             System.out.println("\n1. Colocar personaje");
             System.out.println("2. Retirar personaje");
             System.out.println("3. Intentar resolver el caso");
             System.out.println("4. Salir");
 
-            opcion = leerEntero("Elige una opcion: ");
+            option = leerEntero("Elige una opción: ");
 
-            switch (opcion) {
+            switch (option) {
                 case 1:
                     menuColocarPersonaje();
                     break;
                 case 2:
-                    menuEliminarPersonaje();
                     break;
                 case 3:
-                    casoResuelto = finalizarPartida();
                     break;
                 case 4:
                     System.out.println("Hasta pronto.");
                     break;
                 default:
-                    System.out.println("Opcion no valida. Elige entre 1 y 4.");
+                    System.out.println("Opción no valida. Elige entre 1 y 4.");
             }
 
-        } while (opcion != 4 && !casoResuelto);
+        } while (option != 4 && !casoResuelto);
 
         teclado.close();
-    }*/
+    }
 
     // Lee un numero entero y vuelve a pedirlo si la entrada no es correcta
     public static int leerEntero(String mensaje) {
@@ -116,35 +114,73 @@ public class MurdokuAdrian {
                 return numero;
             }
 
-            System.out.println("Debes introducir un numero entero.");
             teclado.nextLine();
+            System.out.println("Debes introducir un numero entero.");
         }
     }
 
     // Solicita los datos necesarios para colocar un personaje
     public static void menuColocarPersonaje() {
-        char personaje = ' ';
-        boolean letraValida = false;
 
-        while (!letraValida) {
-            System.out.print("Introduce la letra del personaje: ");
-            String texto = teclado.nextLine();
+        System.out.print("Introduce la letra del personaje: ");
+        String entrada = teclado.nextLine().trim().toUpperCase();
 
-            if (texto.length() == 1) {
-                char letra = Character.toUpperCase(texto.charAt(0));
-                if (letra >= 'A' && letra <= 'Z') {
-                    personaje = letra;
-                    letraValida = true;
-                } else {
-                    System.out.println("Debes introducir una unica letra.");
-                }
-            } else {
-                System.out.println("Debes introducir una unica letra.");
-            }
+        if (entrada.length() != 1) {
+            System.out.println("Debes introducir una única letra.");
+            return;
         }
 
+        char personaje = entrada.charAt(0);
         int fila = leerEntero("Introduce la fila (1-7): ") - 1;
         int columna = leerEntero("Introduce la columna (1-7): ") - 1;
+
+        mostrarPersonajesDisponibles(personaje, fila, columna);
+    }
+
+    // Comprueba las pistas particulares de cada personaje
+    public static boolean comprobarPista(int indice, int fila, int columna) {
+
+        switch (letras[indice]) {
+
+            case 'A':
+                return elementos[fila][columna] == ALFOMBRA;
+
+            case 'B':
+                return elementos[fila][columna] == SILLA && zonas[fila][columna] == CENADOR;
+
+            case 'C':
+                return zonas[fila][columna] == PICNIC;
+
+            case 'D':
+
+            case 'E':
+                if (elementos[fila][columna] != SILLA) {
+                    return false;
+                }
+                int idxFabian = buscarPersonaje('F');
+                if (idxFabian != -1 && colocados[idxFabian]) {
+                    int filaFabian = buscarFilaPersonaje('F');
+                    return filaFabian != -1 && filaFabian < fila;
+                }
+                return true;
+
+            case 'F':
+                if (zonas[fila][columna] != ESTANQUE) {
+                    return false;
+                }
+                int idxEthan = buscarPersonaje('E');
+                if (idxEthan != -1 && colocados[idxEthan]) {
+                    int filaEthan = buscarFilaPersonaje('E');
+                    return filaEthan != -1 && fila < filaEthan;
+                }
+                return true;
+
+            case 'V':
+                return true;
+
+            default:
+                return false;
+        }
     }
 
 }
