@@ -26,39 +26,38 @@ public class Murdoku {
 
     // Elementos fijos del escenario
     static int[][] elementos = {
-        {0, 1, 1, 0, 4, 0, 4},
-        {3, 2, 2, 0, 0, 0, 4},
-        {0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 5, 0, 0, 3},
-        {1, 0, 0, 0, 0, 0, 1},
-        {0, 0, 0, 0, 0, 0, 1},
-        {2, 2, 1, 0, 1, 6, 0}
+            { 0, 1, 1, 0, 4, 0, 4 },
+            { 3, 2, 2, 0, 0, 0, 4 },
+            { 0, 0, 0, 0, 0, 0, 0 },
+            { 0, 0, 0, 5, 0, 0, 3 },
+            { 1, 0, 0, 0, 0, 0, 1 },
+            { 0, 0, 0, 0, 0, 0, 1 },
+            { 2, 2, 1, 0, 1, 6, 0 }
     };
 
     // Zona a la que pertenece cada casilla
     static int[][] zonas = {
-        {1, 1, 1, 1, 2, 2, 2},
-        {1, 1, 1, 1, 2, 2, 2},
-        {1, 1, 3, 3, 2, 2, 2},
-        {1, 1, 3, 3, 3, 2, 2},
-        {1, 1, 3, 3, 4, 4, 4},
-        {1, 1, 1, 3, 4, 4, 4},
-        {1, 1, 1, 1, 4, 4, 4}
+            { 1, 1, 1, 1, 2, 2, 2 },
+            { 1, 1, 1, 1, 2, 2, 2 },
+            { 1, 1, 3, 3, 2, 2, 2 },
+            { 1, 1, 3, 3, 3, 2, 2 },
+            { 1, 1, 3, 3, 4, 4, 4 },
+            { 1, 1, 1, 3, 4, 4, 4 },
+            { 1, 1, 1, 1, 4, 4, 4 }
     };
 
     // Datos de los personajes
     static String[] nombres = {
-        "Avery", "Bruno", "Christian",
-        "Daphne", "Ethan", "Fabian", "Vicky"
+            "Avery", "Bruno", "Christian",
+            "Daphne", "Ethan", "Fabian", "Vicky"
     };
 
     static char[] letras = {
-        'A', 'B', 'C', 'D', 'E', 'F', 'V'
+            'A', 'B', 'C', 'D', 'E', 'F', 'V'
     };
 
     // Indica qué personajes ya están colocados
     static boolean[] colocados = new boolean[7];
-
 
     public static void main(String[] args) {
 
@@ -100,74 +99,112 @@ public class Murdoku {
         int elemento = elementos[fila][columna];
 
         return elemento == VACIO
-            || elemento == SILLA
-            || elemento == ALFOMBRA;
+                || elemento == SILLA
+                || elemento == ALFOMBRA;
 
     }
 
-    // Muestra el tablero. Las X se calculan al mostrarlo y no se guardan.
-public static void mostrarTablero() {
+    // Devuelve el simbolo que se debe mostrar en una casilla
+    static char simboloCasilla(int fila, int columna) {
 
-    System.out.println("\nTABLERO");
-    System.out.print("    ");
+        if (tablero[fila][columna] != '.') {
+            return tablero[fila][columna];
+        }
 
-    for (int columna = 0; columna < TAM; columna++) {
-        System.out.print((columna + 1) + "   ");
+        return simboloElemento(elementos[fila][columna]);
     }
 
-    System.out.println();
+    // Muestra el tablero completo por pantalla
+    static void mostrarTablero() {
 
-    for (int fila = 0; fila < TAM; fila++) {
-        System.out.print((fila + 1) + " | ");
+        System.out.println("--- TABLERO MURDOKU ---");
 
-        for (int columna = 0; columna < TAM; columna++) {
-            System.out.print(simboloCasilla(fila, columna) + "   ");
+        for (int fila = 0; fila < TAM; fila++) {
+
+            for (int columna = 0; columna < TAM; columna++) {
+
+                System.out.print(simboloCasilla(fila, columna) + " ");
+
+            }
+
+            System.out.println();
         }
 
         System.out.println();
     }
 
-    System.out.println("\nLeyenda: S = silla | = = alfombra | T = arbol | * = flores");
-    System.out.println("         P = piedra | M = mesa | . = libre | X = descartada");
-}
+    // Muestra los personajes que todavia no se han colocado
+    static void mostrarPersonajesDisponibles() {
 
-// Decide que simbolo debe verse en una casilla
-public static char simboloCasilla(int fila, int columna) {
+        System.out.println("Personajes disponibles:");
 
-    // Si hay un personaje, se muestra antes que el elemento
-    if (tablero[fila][columna] != '.') {
-        return tablero[fila][columna];
-    }
+        for (int i = 0; i < nombres.length; i++) {
 
-    // Los elementos fijos siempre se muestran
-    if (elementos[fila][columna] != VACIO) {
-        return simboloElemento(elementos[fila][columna]);
-    }
+            if (!colocados[i]) {
+                System.out.println(letras[i] + " - " + nombres[i]);
+            }
 
-    // Las X solo se calculan para casillas vacias sin elemento
-    if (filaOcupada(fila) || columnaOcupada(columna)) {
-        return 'X';
-    }
-
-    return '.';
-}
-
-// Muestra los personajes que todavia no se han colocado
-public static void mostrarPersonajesDisponibles() {
-
-    System.out.println("\nPersonajes pendientes:");
-    boolean quedanPersonajes = false;
-
-    for (int i = 0; i < nombres.length; i++) {
-        if (!colocados[i]) {
-            System.out.println(letras[i] + " - " + nombres[i]);
-            quedanPersonajes = true;
         }
     }
 
-    if (!quedanPersonajes) {
-        System.out.println("Todos los personajes estan colocados.");
-    }
-}
+    // Comprueba que las coordenadas estan dentro del tablero
+    static boolean validarCoordenadas(int fila, int columna) {
 
+        return fila >= 0 && fila < TAM &&
+                columna >= 0 && columna < TAM;
+    }
+
+    // Busca un personaje por su letra y devuelve su posicion en el array
+    static int buscarPersonaje(char letra) {
+
+        for (int i = 0; i < letras.length; i++) {
+
+            if (letras[i] == letra) {
+                return i;
+            }
+
+        }
+
+        return -1;
+    }
+
+    // Comprueba si hay algun personaje en una fila
+    static boolean filaOcupada(int fila) {
+
+        for (int columna = 0; columna < TAM; columna++) {
+
+            if (tablero[fila][columna] != '.') {
+                return true;
+            }
+
+        }
+
+        return false;
+    }
+
+    // Comprueba si hay algun personaje en una columna
+    static boolean columnaOcupada(int columna) {
+
+        for (int fila = 0; fila < TAM; fila++) {
+
+            if (tablero[fila][columna] != '.') {
+                return true;
+            }
+
+        }
+
+        return false;
+    }
+
+    // Comprueba si una fila esta libre
+    static boolean filaLibre(int fila) {
+
+        return !filaOcupada(fila);
+    }
+
+    // Comprueba si una columna esta libre
+    static boolean columnaLibre(int columna) {
+
+        return !columnaOcupada(columna);
+    }
 }
